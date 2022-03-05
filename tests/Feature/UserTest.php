@@ -2,13 +2,14 @@
 
 namespace Tests\Feature;
 
+use Illuminate\Foundation\Testing\DatabaseMigrations;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Foundation\Testing\WithFaker;
 use Tests\TestCase;
 
 class UserTest extends TestCase
 {
-    use WithFaker;
+    use WithFaker , RefreshDatabase, DatabaseMigrations;
 
     public function setUp() :void 
     {
@@ -32,7 +33,7 @@ class UserTest extends TestCase
         
         $response = $this->post('api/user/create' , $this->userData);
         $data = $response->decodeResponseJson();
+        $response->assertStatus(200);
 
-        dd($data);
     }
 }

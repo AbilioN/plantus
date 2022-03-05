@@ -19,3 +19,4 @@ Route::middleware('auth:api')->get('/user', function (Request $request) {
 
 
 Route::post('/user/create' , 'UserController@create')->name('user.create');
+Route::post('/user/address/update' , 'AddressController@update')->name('user.address.update');
