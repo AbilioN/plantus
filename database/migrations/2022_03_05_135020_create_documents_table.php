@@ -15,6 +15,14 @@ class CreateDocumentsTable extends Migration
     {
         Schema::create('documents', function (Blueprint $table) {
             $table->bigIncrements('id');
+            $table->string('path');
+            $table->string('extension');
+            $table->unsignedBigInteger('document_category_id');
+            $table->unsignedBigInteger('user_id');
+
+            $table->foreign('user_id')->references('id')->on('users');
+            $table->foreign('document_category_id')->references('id')->on('document_categories');
+
             $table->timestamps();
         });
     }

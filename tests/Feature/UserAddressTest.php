@@ -38,7 +38,8 @@ class UserAddressTest extends TestCase
                 'neighborhood' => 'pajucara',
                 'state' => 'RN',
                 'city' => 'Natal',
-                'adjunct' => ''
+                'adjunct' => '',
+                'file' => $this->pdf_file
         ];
 
         // $this->withExceptionHandling();
