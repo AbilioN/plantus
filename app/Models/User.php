@@ -43,4 +43,9 @@ class User extends Authenticatable
         return $this->where(['cpf' => $cpf])->first();
     }
 
+    public function address()
+    {
+        return $this->hasOne(UserAddress::class);
+    }
+
 }

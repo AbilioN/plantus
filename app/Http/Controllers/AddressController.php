@@ -18,7 +18,7 @@ class AddressController extends Controller
 
         $data = $request->all();
         $response = $this->repo->updateUserAddress($data);
-
-        dd($response);
+        return response()->json($response, 200);
+        
     }
 }
