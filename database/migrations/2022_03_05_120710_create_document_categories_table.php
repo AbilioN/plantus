@@ -20,6 +20,7 @@ class CreateDocumentCategoriesTable extends Migration
         });
 
         DB::table('document_categories')->insert([
+            ['category' => 'avatar'],
             ['category' => 'address'],
             ['category' => 'health'],
             ['category' => 'professional'],
