@@ -22,6 +22,8 @@ class UserAddressRepository
 
     public function __construct(UserAddress $model , DocumentRepository $uploader , Document $document , DocumentCategory $documentCategory )
     {
+
+        dd(Auth::user());
         $this->model = $model;
         $this->uploader = $uploader;
         // $this->user = Auth::user();

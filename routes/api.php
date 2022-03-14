@@ -1,6 +1,8 @@
 <?php
 
+use App\Http\Controllers\AddressController;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 
 /*
 |--------------------------------------------------------------------------
@@ -17,6 +19,30 @@ Route::middleware('auth:api')->get('/user', function (Request $request) {
     return $request->user();
 });
 
+Route::group([
 
+    'middleware' => 'api',
+    'prefix' => 'auth'
+
+], function ($router) {
+
+    Route::post('login', 'AuthController@login');
+    Route::post('logout', 'AuthController@logout');
+    Route::post('refresh', 'AuthController@refresh');
+    Route::post('me', 'AuthController@me');
+
+});
+
+
+
+Route::group(['middleware' => 'basicUser'], function(){
+    Route::post('/user/address/update' , 'AddressController@update')->name('user.address.update');
+
+    // Route::post('/user/address/update' , 'TestController@teste');
+
+
+    Route::post('teste' , function(){
+
+    });
+});
 Route::post('/user/create' , 'UserController@create')->name('user.create');
-Route::post('/user/address/update' , 'AddressController@update')->name('user.address.update');
