@@ -44,4 +44,19 @@ class DocumentRepository
         $url = $this->uploader::url($path);
         return $url;
     }
+
+    public function deleteFile(string $path)
+    {
+        $fileExists = $this->uploader::exists($path);
+        if($fileExists)
+        {
+            $deleted = $this->uploader::delete($path);
+            if($deleted)
+            {
+                return true;
+            }
+        }
+
+        return true;
+    }
 }
