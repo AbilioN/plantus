@@ -22,6 +22,7 @@ class AddressController extends Controller
         $this->uploader = $uploader;
         $this->documentCategory = $documentCategory->where('category' ,  'address')->first();
 
+
     }
 
     public function update(Request $request)

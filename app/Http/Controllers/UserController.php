@@ -21,7 +21,11 @@ class UserController extends Controller
             $user = $this->repo->createUser($data);
             return response()->json($user);
         }catch(Exception $e) {
-            return response()->json($e->getMessage(), 500);
+            
+            $return = [
+                'error' => $e->getMessage(),
+            ];
+            return response()->json($return, 500);
         }
         
     

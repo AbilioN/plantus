@@ -3,6 +3,8 @@
 namespace App\Repositories;
 
 use App\User;
+use Carbon\Carbon;
+use DateTime;
 use Exception;
 use Illuminate\Support\Facades\Hash;
 
@@ -14,32 +16,43 @@ class UserRepository
         $this->model = $model;
     }
 
-    public function createUser(array $data) : User
+    public function createUser(array $data)
     {
 
         $user = $this->model->findByCpf($data['cpf']);
         if($user)
         {
             throw new Exception('Já existe usuário para este cpf');
+
+            // return response()->json(['error' => 'Já existe usuário para este cpf'] , 500);
         }
 
         
         $cpfValido = $this->validarCpf($data['cpf']);
-
         if($cpfValido)
         {
         
             $password = Hash::make($data['password']);
+
             $cpf = preg_replace( '/[^0-9]/is', '', $data['cpf'] );
 
+            
 
-            return $this->model->create([
-                'name' => $data['name'],
-                'email' => $data['email'],
-                'cpf' => $cpf,
-                'password' => $password,
-            ]);
+            try{    
+                return $this->model->create([
+                    'name' => $data['name'],
+                    'email' => $data['email'],
+                    'cpf' => $cpf,
+                    'password' => $password,
+                ]);
 
+            
+    
+            }catch(Exception $e)
+            {
+                dd($e->getMessage());
+            }
+   
         
         }
 
