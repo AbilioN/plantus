@@ -41,6 +41,9 @@ Route::group(['middleware' => 'basicUser'], function(){
     Route::post('user/profile/update' , 'UserProfileController@update')->name('user.profile.update');
     Route::get('user/profile/find' , 'UserProfileController@find')->name('user.profile.find');
 
+    Route::post('user/health/update', 'UserHealthController@update')->name('user.health.update');
+    Route::get('user/health/find', 'UserHealthController@find')->name('user.health.find');
+
     Route::post('teste' , function(){
 
     });
