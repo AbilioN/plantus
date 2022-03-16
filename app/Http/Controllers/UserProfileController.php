@@ -113,7 +113,7 @@ class UserProfileController extends Controller
                 'extension' => $fileExtension,
                 'document_category_id' => $this->documentCategory->id,
                 'user_id' => $user->id,
-    
+                'description' => 'user_avatar'
             ]);
 
             if($createdDocument)

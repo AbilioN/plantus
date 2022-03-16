@@ -88,6 +88,7 @@ class UserAddressRepository
             'extension' => $fileExtension,
             'document_category_id' => $this->documentCategory->id,
             'user_id' => $this->user->id,
+            'description' => 'address_receipt'
 
         ]);
         if($createdDocument)

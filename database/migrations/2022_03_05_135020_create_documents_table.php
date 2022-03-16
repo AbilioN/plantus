@@ -17,6 +17,7 @@ class CreateDocumentsTable extends Migration
             $table->bigIncrements('id');
             $table->string('path');
             $table->string('extension');
+            $table->string('description');
             $table->unsignedBigInteger('document_category_id');
             $table->unsignedBigInteger('user_id');
 

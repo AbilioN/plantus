@@ -62,6 +62,7 @@ class AddressController extends Controller
 
     public function updateUserAddressFile($file)
     {
+
         $fileExtension = $file->getClientOriginalExtension();
         $user = Auth::user();
 
@@ -87,8 +88,9 @@ class AddressController extends Controller
             'extension' => $fileExtension,
             'document_category_id' => $this->documentCategory->id,
             'user_id' => $user->id,
-
+            'description' => 'address_receipt'
         ]);
+
 
         if($createdDocument)
         { 
