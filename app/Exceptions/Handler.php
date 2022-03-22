@@ -2,6 +2,7 @@
 
 namespace App\Exceptions;
 
+use App\Http\Responses\Response;
 use Exception;
 use Illuminate\Foundation\Exceptions\Handler as ExceptionHandler;
 
@@ -46,6 +47,17 @@ class Handler extends ExceptionHandler
      */
     public function render($request, Exception $exception)
     {
+        if($exception instanceof UserEmailAlreadyExistsException)
+        {
+            return Response::badRequest($exception->getMessage());
+            // return response()->json([
+            //     'success' => false,
+            //     'error' => $exception->getMessage()
+            // ], 
+            // 400,
+            // ['Content-type' => 'application/json;charset=UTF-8' , 'Charset' => 'utf-8'], JSON_UNESCAPED_UNICODE
+            // );
+        }
         return parent::render($request, $exception);
     }
 }

@@ -2,6 +2,7 @@
 
 namespace App\Repositories;
 
+use App\Exceptions\UserEmailAlreadyExistsException;
 use App\User;
 use Carbon\Carbon;
 use DateTime;
@@ -26,7 +27,11 @@ class UserRepository
 
             // return response()->json(['error' => 'Já existe usuário para este cpf'] , 500);
         }
-
+        $user = $this->model->where('email', $data['email'])->first();
+        if($user)
+        {
+            throw new UserEmailAlreadyExistsException('Já existe usuário para este email');
+        }
         
         $cpfValido = $this->validarCpf($data['cpf']);
         if($cpfValido)

@@ -37,17 +37,22 @@ class AddressController extends Controller
     
     
             $user = Auth::user();
-            $address =  UserAddress::create([
-                    'user_id' => $user->id,
-                    'street' => $data['street'],
-                    'number' => $data['number'],
-                    'cep' =>  $data['cep'],
-                    'neighborhood' =>$data['neighborhood'],
-                    'state' => $data['state'],
-                    'city' => $data['city'],
-                    'adjunct' => $data['adjunct'],
-            ]);
-    
+            $address = UserAddress::where( ['user_id' => $user->id])->first();
+            if(!$address)
+            {
+                $address = new UserAddress();
+                $address->user_id = $user->id;
+            }
+
+            $address->street = $data['street'];
+            $address->number =  $data['number'];
+            $address->cep =  $data['cep'];
+            $address->neighborhood = $data['neighborhood'];
+            $address->state =  $data['state'];
+            $address->city = $data['city'];
+            $address->adjunct = $data['adjunct'];
+            
+            $address->save();
             $url = $this->uploader->getFileUrl($document['path']);
             $addressArray = $address->toArray();
             $addressArray['file']['url'] = $url;
