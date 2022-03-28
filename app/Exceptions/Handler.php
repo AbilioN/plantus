@@ -47,16 +47,19 @@ class Handler extends ExceptionHandler
      */
     public function render($request, Exception $exception)
     {
-        if($exception instanceof UserEmailAlreadyExistsException)
+        if(
+            $exception instanceof UserEmailAlreadyExistsException || 
+            $exception instanceof InvalidUserRoleException || 
+            $exception instanceof InvalidProfessionalExperienceException
+        )
         {
             return Response::badRequest($exception->getMessage());
-            // return response()->json([
-            //     'success' => false,
-            //     'error' => $exception->getMessage()
-            // ], 
-            // 400,
-            // ['Content-type' => 'application/json;charset=UTF-8' , 'Charset' => 'utf-8'], JSON_UNESCAPED_UNICODE
-            // );
+        }
+
+        if($exception instanceof InvalidUserRoleException)
+        {
+            return Response::badRequest($exception->getMessage());
+
         }
         return parent::render($request, $exception);
     }

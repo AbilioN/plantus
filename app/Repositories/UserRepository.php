@@ -2,6 +2,7 @@
 
 namespace App\Repositories;
 
+use App\Exceptions\InvalidUserRoleException;
 use App\Exceptions\UserEmailAlreadyExistsException;
 use App\User;
 use Carbon\Carbon;
@@ -32,6 +33,11 @@ class UserRepository
         {
             throw new UserEmailAlreadyExistsException('Já existe usuário para este email');
         }
+
+        if(!isset($data['role_id']))
+        {
+            throw new InvalidUserRoleException('role_id não encontrado');
+        }
         
         $cpfValido = $this->validarCpf($data['cpf']);
         if($cpfValido)
@@ -49,6 +55,7 @@ class UserRepository
                     'email' => $data['email'],
                     'cpf' => $cpf,
                     'password' => $password,
+                    'role_id' => $data['role_id'],
                 ]);
 
             
