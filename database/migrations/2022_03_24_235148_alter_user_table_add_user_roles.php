@@ -14,8 +14,8 @@ class AlterUserTableAddUserRoles extends Migration
     public function up()
     {
         Schema::table('users', function (Blueprint $table) {
-            $table->unsignedBigInteger('role_id');
-            $table->foreign('role_id')->references('id')->on('user_roles');
+            // $table->unsignedBigInteger('role_id');
+            // $table->foreign('role_id')->references('id')->on('user_roles')->nullable();
         });
     }
 
@@ -27,7 +27,7 @@ class AlterUserTableAddUserRoles extends Migration
     public function down()
     {
         Schema::table('users', function($table) {
-            $table->dropColumn('role_id');
+            // $table->dropColumn('role_id');
         });
     }
 }

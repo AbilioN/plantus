@@ -66,4 +66,19 @@ class UserProfessionalController extends Controller
             dd($e->getMessage());
         }
     }
+
+    public function find(Request $request)
+    {
+
+        try {
+            $user = Auth::user();
+            $userProfessional = UserProfessional::where('user_id' , $user->id)->first();
+
+        }catch(Exception $e)
+        {
+            dd($e->getMessage());
+        }
+
+        
+    }
 }
