@@ -25,6 +25,10 @@ class CreateDocumentCategoriesTable extends Migration
             ['category' => 'health'],
             ['category' => 'professional'],
             ['category' => 'documents'],
+            ['category' => 'work_card'],
+            ['category' => 'vote_card'],
+            ['category' => 'american_visas']
+
         ]);
     }
 

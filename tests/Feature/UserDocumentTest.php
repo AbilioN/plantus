@@ -43,6 +43,30 @@ class UserDocumentTest extends TestCase
                     'issuing_state' => 'RN',
                     'file' => $this->pdf_file
                 ],
+                'work_card' => [
+                    'number' => '235554454615421',
+                    'serie' => '32563',
+                    'pis_pased' => '32653562553',
+                    'date_emission' => '01-09-1994',
+                    'file' => $this->pdf_file
+                ],
+                'vote_card' => [
+                    'number' => '653556565423233',
+                    'session' => '21',
+                    'zone' => '51',
+                ],
+                'passport' => [
+                    'passport' => '58553ABD5622',
+                    'date_emission' => '01-09-1994',
+                    'expiration_date'  => '01-09-2004',
+                    'file' => $this->pdf_file
+                ],
+                'american_visas' => [
+                    'number' => '653556565423233',
+                    'date_emission' => '01-09-1994',
+                    'expiration_date'  => '01-09-2004',
+                    'file' => $this->pdf_file
+                ]
         ];
 
         $this->withoutExceptionHandling();
