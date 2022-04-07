@@ -10,6 +10,7 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Validator;
 use App\Models\DocumentCategory;
 use App\Models\UserAmericanVisa;
+use App\Models\UserDocumentData;
 use App\Models\UserPassportCard;
 use App\Models\UserVoteCard;
 use App\Models\UserWorkCard;
@@ -67,6 +68,13 @@ class UserDocumentController extends Controller
                 'date_emission' => '01-09-1994',
                 'expiration_date'  => '01-09-2004',
                 'file' => $data['file2']
+            ],
+            'document_data' => [
+                'gender' => 'Feminino',
+                'marital_status' => 'Casada',
+                'mother' => 'Maria Silva',
+                'father' => 'João Silva',
+                'bank_account' => 'Banco do Brasil - 001 agência 253-x - Conta Corrente 253265-1'
             ]
         ];
 
@@ -99,7 +107,17 @@ class UserDocumentController extends Controller
             $userAmericanVisa =  $this->updateUserAmericanVisas($data['american_visas']);
         }
 
-        dd($userDocument,$userWorkCard,$userVoteCard, $userPassport,   $userAmericanVisa);
+        if(isset($data['document_data']))
+        {
+            $userDocumentData = $this->updateUserDocumentData($data['document_data']);
+        }
+        if($userDocument && $userWorkCard && $userVoteCard && $userPassport && $userAmericanVisa && $userDocumentData)
+        {
+            return response()->json(['success' => true], 200);
+        }else{
+            dd('errou');
+        }
+
     }
 
     private function updateUserDocument($userDocumentData)
@@ -142,7 +160,6 @@ class UserDocumentController extends Controller
             $userDocument->issuing_agency = $userDocumentData['issuing_agency'];
             $userDocument->issuing_state = $userDocumentData['issuing_state'];
 
-            // dd('aqui');
             if($userDocument->save() && $updatedDocument->save()) {
                 DB::commit();
                 // return response()->json(['success' => true] , 200);
@@ -161,7 +178,9 @@ class UserDocumentController extends Controller
         $bucket =  'user/document/'.$this->user->id;
         $fileExtension = $userDocumentFile->getClientOriginalExtension();
         
-        $currentDocument = Document::where(['user_id' => $this->user->id , 'document_category_id' =>$this->documentCategory->id , 'description' => 'document'])->first();
+        $documentCategory = DocumentCategory::where('category', 'documents')->first();
+
+        $currentDocument = Document::where(['user_id' => $this->user->id , 'document_category_id' => $documentCategory->id , 'description' => 'document'])->first();
         if($currentDocument)
         {
 
@@ -256,8 +275,9 @@ class UserDocumentController extends Controller
     {
         $bucket =  'user/work_card/'.$this->user->id;
         $fileExtension = $workCardFile->getClientOriginalExtension();
+        $documentCategory = DocumentCategory::where('category', 'work_card')->first();
         
-        $currentDocument = Document::where(['user_id' => $this->user->id , 'document_category_id' =>$this->documentCategory->id , 'description' => 'work_card'])->first();
+        $currentDocument = Document::where(['user_id' => $this->user->id , 'document_category_id' =>$documentCategory->id , 'description' => 'work_card'])->first();
         if($currentDocument)
         {
             // remover arquivo e deletar document
@@ -285,7 +305,7 @@ class UserDocumentController extends Controller
         }
     }
 
-    private function updateUserVoteCard($userWorkCardData)
+    private function updateUserVoteCard($userVoteCardData)
     {
         DB::beginTransaction();
         $messages = [
@@ -299,34 +319,32 @@ class UserDocumentController extends Controller
             'session' => 'required|string',
             'zone' => 'required|string',
         ];
-        $validator = Validator::make($userWorkCardData, $rules, $messages);
-        // dd($userWorkCardData);
+        $validator = Validator::make($userVoteCardData, $rules, $messages);
+        // dd($userVoteCard);
         if($validator->passes())
         {
-            $userWorkCard = UserVoteCard::where('user_id', $this->user->id)->first();
-            if(!$userWorkCard)
+            $userVoteCard = UserVoteCard::where('user_id', $this->user->id)->first();
+            if(!$userVoteCard)
             {
-                $userWorkCard = UserVoteCard::make(['user_id' , $this->user->id]);
-                $userWorkCard->user_id  = $this->user->id;
+                $userVoteCard = UserVoteCard::make(['user_id' , $this->user->id]);
+                $userVoteCard->user_id  = $this->user->id;
 
             }
-            // $dateEmission = new Carbon($userWorkCardData['date_emission']);
+            // $dateEmission = new Carbon($userVoteCard['date_emission']);
             
-            if(isset($userWorkCardData['file']))
+            if(isset($userVoteCardData['file']))
             {
-                $updatedDocument = $this->updateUserDocumentFile($userWorkCardData['file']);
-                unset($userWorkCardData['file']);
+                $updatedDocument = $this->updateUserVoteCardFile($userVoteCardData['file']);
+                unset($userVoteCardData['file']);
             }
 
-            // dd($updatedDocument);
 
-            $userWorkCard->number = $userWorkCardData['number'];
-            // $userWorkCard->date_emission = $dateEmission;
-            $userWorkCard->session = $userWorkCardData['session'];
-            $userWorkCard->zone = $userWorkCardData['zone'];
+            $userVoteCard->number = $userVoteCard['number'];
+            // $userVoteCard->date_emission = $dateEmission;
+            $userVoteCard->session = $userVoteCard['session'];
+            $userVoteCard->zone = $userVoteCard['zone'];
 
-            // dd('aqui');
-            if($userWorkCard->save() && $updatedDocument->save()) {
+            if($userVoteCard->save() && $updatedDocument->save()) {
                 DB::commit();
                 // return response()->json(['success' => true] , 200);
                 return true;
@@ -336,6 +354,41 @@ class UserDocumentController extends Controller
             // return response()->json(['error' => $validator->errors()], 500);
             return false;
         }
+    }
+
+    private function updateUserVoteCardFile($userVoteCardFile)
+    {
+        $bucket =  'user/passport_card/'.$this->user->id;
+        $fileExtension = $userVoteCardFile->getClientOriginalExtension();
+        $documentCategory = DocumentCategory::where('category' , 'vote_card')->first();
+        $currentDocument = Document::where(['user_id' => $this->user->id , 'document_category_id' =>$documentCategory->id , 'description' => 'vote_card'])->first();
+        if($currentDocument)
+        {
+            // remover arquivo e deletar document
+            $deletedFile = $this->uploader->deleteFile($currentDocument['path']);
+            $deletedDocument = $currentDocument->delete();
+            if(!$deletedDocument || !$deletedFile)
+            {
+                
+                throw new Exception('erro em deletar arquivo existente');
+            }
+        }
+
+        $filePath =   $this->uploader->uploadDocument($userVoteCardFile , $bucket);
+        if($filePath)
+        {
+            $createdDocument =  Document::make([
+                'path' => $filePath,
+                'extension' => $fileExtension,
+                'document_category_id' => $this->documentCategory->id,
+                'user_id' => $this->user->id,
+                'description' => 'vote_card'
+            ]);
+                
+            return $createdDocument;
+        }
+
+
     }
 
     private function updateUserPassport($userPassportData)
@@ -470,7 +523,7 @@ class UserDocumentController extends Controller
 
             }catch(Exception $e){
                 // return response()->json(['error' => $e->getMessage()], 500);
-                dd($e->getMessage());
+                // dd($e->getMessage());
                 return false;
             }
         }
@@ -507,6 +560,58 @@ class UserDocumentController extends Controller
             // dd($createdDocument);
                 
             return $createdDocument;
+        }
+    }
+
+    private function updateUserDocumentData($userDocumentData)
+    {
+
+        $messages = [
+            'gender.required' => 'é necessário informar o gênero',
+            'marital_status.required' => 'é necessário informar o estado civil',
+            'mother.required' => 'é necessário informar o nome da mãe',
+            'bank_account.required' => 'é necessário informar os dados bancários',
+
+        ];
+
+        $rules = [
+            'gender' => 'required|string',
+            'marital_status' => 'required|string',
+            'mother' => 'required|string',
+            'bank_account' => 'required|string',
+        ];
+
+        $validator = Validator::make($userDocumentData, $rules, $messages);
+
+        
+        if($validator->passes())
+        {
+            $userDocument = UserDocumentData::where('user_id', $this->user->id)->first();
+            if(!$userDocument)
+            {
+                $userDocument = UserDocumentData::make();
+                $userDocument->user_id = $this->user->id;
+
+            }
+            $userDocument->gender = $userDocumentData['gender'];
+            $userDocument->marital_status = $userDocumentData['marital_status'];
+            $userDocument->mother = $userDocumentData['mother'];
+            $userDocument->bank_account = $userDocumentData['bank_account'];
+
+            if(isset($userDocumentData['father']))
+            {
+                $userDocument->father = $userDocumentData['father'];
+
+            }
+
+            if($userDocument->save())
+            {
+                return true;
+            }
+            
+
+        }else {
+            return false;
         }
     }
 }

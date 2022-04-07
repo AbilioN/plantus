@@ -66,6 +66,13 @@ class UserDocumentTest extends TestCase
                     'date_emission' => '01-09-1994',
                     'expiration_date'  => '01-09-2004',
                     'file' => $this->pdf_file
+                ],
+                'document_data' => [
+                    'gender' => 'Feminino',
+                    'marital_status' => 'Casada',
+                    'mother' => 'Maria Silva',
+                    'father' => 'João Silva',
+                    'bank_account' => 'Banco do Brasil - 001 agência 253-x - Conta Corrente 253265-1'
                 ]
         ];
 
