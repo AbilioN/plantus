@@ -613,4 +613,122 @@ class UserDocumentController extends Controller
             return false;
         }
     }
+
+
+
+
+// find documentData
+
+
+
+    public function find(Request $request)
+    {
+        
+        $this->user = Auth::user();
+        $outputData = [];
+        // $userDocument = $this->findUserDocument();
+        $this->findUserWorkCard();
+        // if($userDocument)
+        // {
+        //     $outputData['document'] = $userDocument;
+        // }
+
+
+        $outputData = [
+            'document' => [
+                'rg' => '2497357',
+                'date_emission' =>'02-04-2006',
+                'issuing_agency'  => 'ITEP',
+                'issuing_state' => 'RN',
+                'file' => $data['file1']
+            ],
+            'work_card' => [
+                'number' => '235554454615421',
+                'serie' => '32563',
+                'pis_pased' => '32653562553',
+                'date_emission' => '01-09-1994',
+                'file' => $data['file2']
+            ],
+            'vote_card' => [
+                'number' => '653556565423233',
+                'session' => '21',
+                'zone' => '51',
+                'file' => $data['file3']
+
+            ],
+            'passport' => [
+                'passport' => '58553ABD5622',
+                'date_emission' => '01-09-1994',
+                'expiration_date'  => '01-09-2004',
+                'file' => $data['file2']
+
+            ],
+            'american_visas' => [
+                'number' => '653556565423233',
+                'date_emission' => '01-09-1994',
+                'expiration_date'  => '01-09-2004',
+                'file' => $data['file2']
+            ],
+            'document_data' => [
+                'gender' => 'Feminino',
+                'marital_status' => 'Casada',
+                'mother' => 'Maria Silva',
+                'father' => 'João Silva',
+                'bank_account' => 'Banco do Brasil - 001 agência 253-x - Conta Corrente 253265-1'
+            ]
+        ];
+
+    }
+
+
+    private function findUserDocument()
+    {
+        $userDocument = UserDocuments::where('user_id', $this->user->id)->first();
+        if(!$userDocument)
+        {
+            return false;
+        }
+
+        $userDocument['date_emission'] = Carbon::parse($userDocument['date_emission'])->format('d/m/Y');
+        $userDocument = collect($userDocument);
+        $userDocument = $userDocument->except(['id', 'user_id' , 'created_at', 'updated_at'])->toArray();
+
+        $userDocumentFile = Document::where(['user_id' => $this->user->id , 'description' => 'document' , 'document_category_id' => 5])->first();
+
+        if($userDocumentFile)
+        {
+            $fileUrl = $this->uploader->getFileUrl($userDocumentFile['path']);
+            if($fileUrl)
+            {
+                $userDocument['file'] = $fileUrl;
+            }
+        }
+
+        // return $userDocument->except();
+        return $userDocument;
+    }
+
+    private function findUserWorkCard()
+    {
+        $userWorkCard = UserWorkCard::where(['user_id' => $this->user->id])->first();
+        if(!$userWorkCard)
+        {
+            return false;
+        }
+        $userWorkCard = collect($userWorkCard);
+        $userWorkCard = $userWorkCard->except(['id', 'user_id' , 'created_at', 'updated_at'])->toArray();
+        
+
+        $userWorkCard['date_emission'] = Carbon::parse($userWorkCard['date_emission'])->format('d/m/Y');
+        $workCardFile = Document::where(['user_id' => $this->user->id , 'description' => 'work_card' , 'document_category_id' => 6])->first();
+        if($workCardFile)
+        {
+            $fileUrl = $this->uploader->getFileUrl($workCardFile['path']);
+            if($fileUrl)
+            {
+                $userWorkCard['file'] = $fileUrl;
+            }
+        }
+        return $userWorkCard;
+    }
 }

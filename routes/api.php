@@ -51,6 +51,8 @@ Route::group(['middleware' => 'basicUser'], function(){
 
     Route::post('user/documents/update' , 'UserDocumentController@update')->name('user.documents.update');
 
+
+    Route::get('user/documents/find' , 'UserDocumentController@find')->name('user.documents.update');
     Route::post('teste' , function(){
 
     });
