@@ -32,55 +32,55 @@ class UserDocumentController extends Controller
     {
         $this->user = Auth::user();
     
-        // $data = $request->all();
-        // dd($data);
-        // $this->document = [
-        //     'document' => [
-        //         'rg' => '2497357',
-        //         'date_emission' =>'02-04-2006',
-        //         'issuing_agency'  => 'ITEP',
-        //         'issuing_state' => 'RN',
-        //         'file' => $data['file1']
-        //     ],
-        //     'work_card' => [
-        //         'number' => '235554454615421',
-        //         'serie' => '32563',
-        //         'pis_pased' => '32653562553',
-        //         'date_emission' => '01-09-1994',
-        //         'file' => $data['file2']
-        //     ],
-        //     'vote_card' => [
-        //         'number' => '653556565423233',
-        //         'session' => '21',
-        //         'zone' => '51',
-        //         'file' => $data['file3']
-
-        //     ],
-        //     'passport' => [
-        //         'passport' => '58553ABD5622',
-        //         'date_emission' => '01-09-1994',
-        //         'expiration_date'  => '01-09-2004',
-        //         'file' => $data['file2']
-
-        //     ],
-        //     'american_visas' => [
-        //         'number' => '653556565423233',
-        //         'date_emission' => '01-09-1994',
-        //         'expiration_date'  => '01-09-2004',
-        //         'file' => $data['file2']
-        //     ],
-        //     'document_data' => [
-        //         'gender' => 'Feminino',
-        //         'marital_status' => 'Casada',
-        //         'mother' => 'Maria Silva',
-        //         'father' => 'João Silva',
-        //         'bank_account' => 'Banco do Brasil - 001 agência 253-x - Conta Corrente 253265-1'
-        //     ]
-        // ];
-
-        // $data = $this->document;
-
         $data = $request->all();
+        // dd($data);
+        $this->document = [
+            'document' => [
+                'rg' => '2497357',
+                'date_emission' =>'02-04-2006',
+                'issuing_agency'  => 'ITEP',
+                'issuing_state' => 'RN',
+                'file' => $data['file1']
+            ],
+            'work_card' => [
+                'number' => '235554454615421',
+                'serie' => '32563',
+                'pis_pased' => '32653562553',
+                'date_emission' => '01-09-1994',
+                'file' => $data['file2']
+            ],
+            'vote_card' => [
+                'number' => '653556565423233',
+                'session' => '21',
+                'zone' => '51',
+                'file' => $data['file1']
+
+            ],
+            'passport' => [
+                'passport' => '58553ABD5622',
+                'date_emission' => '01-09-1994',
+                'expiration_date'  => '01-09-2004',
+                'file' => $data['file2']
+
+            ],
+            'american_visas' => [
+                'number' => '653556565423233',
+                'date_emission' => '01-09-1994',
+                'expiration_date'  => '01-09-2004',
+                'file' => $data['file2']
+            ],
+            'document_data' => [
+                'gender' => 'Feminino',
+                'marital_status' => 'Casada',
+                'mother' => 'Maria Silva',
+                'father' => 'João Silva',
+                'bank_account' => 'Banco do Brasil - 001 agência 253-x - Conta Corrente 253265-1'
+            ]
+        ];
+
+        $data = $this->document;
+
+        // $data = $request->all();
 
 
         if(isset($data['document']))
@@ -623,60 +623,58 @@ class UserDocumentController extends Controller
 
     public function find(Request $request)
     {
+
         
         $this->user = Auth::user();
         $outputData = [];
-        // $userDocument = $this->findUserDocument();
-        $this->findUserWorkCard();
-        // if($userDocument)
-        // {
-        //     $outputData['document'] = $userDocument;
-        // }
+        $userDocument = $this->findUserDocument();
 
+        if($userDocument)
+        {
+            $outputData['document'] = $userDocument;
+        }
 
-        $outputData = [
-            'document' => [
-                'rg' => '2497357',
-                'date_emission' =>'02-04-2006',
-                'issuing_agency'  => 'ITEP',
-                'issuing_state' => 'RN',
-                'file' => $data['file1']
-            ],
-            'work_card' => [
-                'number' => '235554454615421',
-                'serie' => '32563',
-                'pis_pased' => '32653562553',
-                'date_emission' => '01-09-1994',
-                'file' => $data['file2']
-            ],
-            'vote_card' => [
-                'number' => '653556565423233',
-                'session' => '21',
-                'zone' => '51',
-                'file' => $data['file3']
+        $userWorkCard = $this->findUserWorkCard();
 
-            ],
-            'passport' => [
-                'passport' => '58553ABD5622',
-                'date_emission' => '01-09-1994',
-                'expiration_date'  => '01-09-2004',
-                'file' => $data['file2']
+        if($userWorkCard)
+        {
+            $outputData['work_card'] = $userWorkCard;
 
-            ],
-            'american_visas' => [
-                'number' => '653556565423233',
-                'date_emission' => '01-09-1994',
-                'expiration_date'  => '01-09-2004',
-                'file' => $data['file2']
-            ],
-            'document_data' => [
-                'gender' => 'Feminino',
-                'marital_status' => 'Casada',
-                'mother' => 'Maria Silva',
-                'father' => 'João Silva',
-                'bank_account' => 'Banco do Brasil - 001 agência 253-x - Conta Corrente 253265-1'
-            ]
-        ];
+        }
+
+        $userVoteCard = $this->findUserVoteCard();
+
+        if($userVoteCard)
+        {
+            $outputData['vote_card'] = $userVoteCard;
+
+        }
+        
+        
+        $userPassport = $this->findUserPassport();
+
+        if($userPassport)
+        {
+            $outputData['passport'] = $userPassport;
+            
+        }
+        
+        $userAmericanVisa = $this->findUserAmericanVisas();
+        if($userAmericanVisa)
+        {
+            $outputData['american_visas'] = $userAmericanVisa;
+
+        }
+
+        $userData = $this->findUserDocumentData();
+
+        if($userData)
+        {
+            $outputData['document_data'] = $userData;
+
+        }
+        
+        return response()->json($outputData);
 
     }
 
@@ -700,11 +698,12 @@ class UserDocumentController extends Controller
             $fileUrl = $this->uploader->getFileUrl($userDocumentFile['path']);
             if($fileUrl)
             {
-                $userDocument['file'] = $fileUrl;
+                $userDocument['file']['url'] = $fileUrl;
+                $userDocument['file']['extension'] = $userDocumentFile->extension;
+
             }
         }
 
-        // return $userDocument->except();
         return $userDocument;
     }
 
@@ -727,8 +726,117 @@ class UserDocumentController extends Controller
             if($fileUrl)
             {
                 $userWorkCard['file'] = $fileUrl;
+                $userWorkCard['file']['extension'] = $workCardFile->extension;
+
             }
         }
         return $userWorkCard;
+    }
+
+    private function findUserVoteCard()
+    {
+        $userVoteCard = UserVoteCard::where(['user_id' => $this->user->id])->first();
+        if(!$userVoteCard)
+        {
+            return false;
+        }
+        $userVoteCard = collect($userVoteCard);
+        $userVoteCard = $userVoteCard->except(['id', 'user_id' , 'created_at', 'updated_at'])->toArray();
+
+        $userVoteCardFile = Document::where(['user_id' => $this->user->id , 'description' => 'vote_card' , 'document_category_id' => 7])->first();
+
+        if($userVoteCardFile)
+        {
+            $fileUrl = $this->uploader->getFileUrl($userVoteCardFile['path']);
+            if($fileUrl)
+            {
+                $userVoteCard['file']['url'] = $fileUrl;
+                $userVoteCard['file']['extension'] = $userVoteCardFile->extension;
+
+            }
+        }
+
+        return $userVoteCard;
+    }
+
+    private function findUserPassport()
+    {
+
+        $userPassport = UserPassportCard::where(['user_id' => $this->user->id])->first();
+
+        if(!$userPassport)
+        {
+            return false;
+        }
+        $userPassport = collect($userPassport);
+        $userPassport = $userPassport->except(['id', 'user_id' , 'created_at', 'updated_at'])->toArray();
+        
+
+        $userPassport['date_emission'] = Carbon::parse($userPassport['date_emission'])->format('d/m/Y');
+
+        $userPassportFile = Document::where(['user_id' => $this->user->id , 'description' => 'passport_card' , 'document_category_id' => 5])->first();
+
+
+        if($userPassportFile)
+        {
+            $fileUrl = $this->uploader->getFileUrl($userPassportFile['path']);
+            if($fileUrl)
+            {
+                $userPassport['file']['url'] = $fileUrl;
+                $userPassport['file']['extension'] = $userPassportFile->extension;
+
+            }
+        }
+
+        return $userPassport;
+
+    }
+
+    private function findUserAmericanVisas()
+    {
+        $userAmericanVisa = UserAmericanVisa::where('user_id', $this->user->id)->first();
+
+        if(!$userAmericanVisa)
+        {
+            return false;
+        }
+
+
+        $userAmericanVisa = collect($userAmericanVisa);
+        $userAmericanVisa = $userAmericanVisa->except(['id', 'user_id' , 'created_at', 'updated_at'])->toArray();
+        
+
+        $userAmericanVisa['date_emission'] = Carbon::parse($userAmericanVisa['date_emission'])->format('d/m/Y');
+        $userAmericanVisa['expiration_date'] = Carbon::parse($userAmericanVisa['date_emission'])->format('d/m/Y');
+
+
+        $userAmericanVisaFile = Document::where(['user_id' => $this->user->id , 'description' => 'american_visas' , 'document_category_id' => 5])->first();
+
+        if($userAmericanVisaFile)
+        {
+            $fileUrl = $this->uploader->getFileUrl($userAmericanVisaFile['path']);
+            if($fileUrl)
+            {
+                $userAmericanVisa['file']['url'] = $fileUrl;
+                $userAmericanVisa['file']['extension'] = $userAmericanVisaFile->extension;
+
+            }
+        }
+
+        return $userAmericanVisa;
+    }
+
+    private function findUserDocumentData()
+    {
+        $userDocument = UserDocumentData::where('user_id', $this->user->id)->first();
+
+        if(!$userDocument)
+        {
+            return false;
+        }
+
+        $userDocument = collect($userDocument);
+        $userDocument = $userDocument->except(['id', 'user_id' , 'created_at', 'updated_at'])->toArray();
+        return $userDocument;
     }
 }
