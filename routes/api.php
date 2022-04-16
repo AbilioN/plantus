@@ -53,6 +53,12 @@ Route::group(['middleware' => 'basicUser'], function(){
 
 
     Route::get('user/documents/find' , 'UserDocumentController@find')->name('user.documents.update');
+   
+    
+    Route::get('role/show' , 'RoleController@show')->name('role.show');
+
+    
+   
     Route::post('teste' , function(){
 
     });
