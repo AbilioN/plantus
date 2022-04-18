@@ -18,7 +18,7 @@ class RoleController extends Controller
         
         foreach($roles as $key=>$role)
         {
-            $subroles = SubRoles::where('role_id', $key)->get();
+            $subroles = SubRoles::where('role_id', $role->id)->get();
             $role = collect($role);
             $role = $role->except(['created_at', 'updated_at'])->toArray();
             if(count($subroles) > 0)

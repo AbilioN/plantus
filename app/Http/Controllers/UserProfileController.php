@@ -2,6 +2,8 @@
 
 namespace App\Http\Controllers;
 
+use App\Exceptions\UserNotAuthenticatedException;
+use App\Exceptions\UserNotFoundException;
 use App\Models\Document;
 use Illuminate\Http\Request;
 use App\Repositories\DocumentRepository;
@@ -24,7 +26,6 @@ class UserProfileController extends Controller
 
     public function update(Request $request)
     {
-
         try {
             $data = $request->all();
             $avatar = $data['avatar'];
@@ -41,18 +42,6 @@ class UserProfileController extends Controller
             $birthDate = new Carbon($data['birth_date']);
 
             $startPlantus = new Carbon($data['start_plantus']);
-
-
-            // $birthDate = $birthDate->format('Y-m-d');
-            // $birthDate = $birthDate->format('d-m-Y');
-
-            // $insertData = [
-            //     'name' => $data['name'],
-            //     'birth_date' => $birthDate->format('d-m-Y'),
-            //     'phone' => $data['phone'],
-            //     'whatsapp' => $data['whatsapp'],
-            //     'avatar' => $avatarUrl
-            // ];
 
             $user->name = $data['name'];
             $user->birth_date = $birthDate;
@@ -126,13 +115,22 @@ class UserProfileController extends Controller
         
     }
 
-    public function find(Request $request)
+    public function find(Request $request, $user_id = null)
     {
-        $user = Auth::user();
+        if($user_id)
+        {
+            $user = User::find($user_id);
+            if(!$user)
+            {
+                throw new UserNotFoundException('Não foi encontrado usuário para este id');
+            }
+        }else {
+            $user = Auth::user();
+        }
 
         if(!$user)
         {
-            throw new Exception('erro de autenticação de usuário');
+            throw new UserNotAuthenticatedException('erro de autenticação de usuário');
         }
 
         $user = collect($user);

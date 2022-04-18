@@ -50,12 +50,16 @@ class Handler extends ExceptionHandler
         if(
             $exception instanceof UserEmailAlreadyExistsException || 
             $exception instanceof InvalidUserRoleException || 
-            $exception instanceof InvalidProfessionalExperienceException
+            $exception instanceof InvalidProfessionalExperienceException ||
+            $exception instanceof UserNotAuthenticatedException
         )
         {
             return Response::badRequest($exception->getMessage());
         }
-
+        if($exception instanceof UserNotFoundException)
+        {
+            return Response::notFound($exception->getMessage());
+        }
         if($exception instanceof InvalidUserRoleException)
         {
             return Response::badRequest($exception->getMessage());

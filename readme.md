@@ -1,72 +1,191 @@
-<p align="center"><img src="https://res.cloudinary.com/dtfbvvkyp/image/upload/v1566331377/laravel-logolockup-cmyk-red.svg" width="400"></p>
+## Plataformam Plantus
 
-<p align="center">
-<a href="https://travis-ci.org/laravel/framework"><img src="https://travis-ci.org/laravel/framework.svg" alt="Build Status"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://poser.pugx.org/laravel/framework/d/total.svg" alt="Total Downloads"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://poser.pugx.org/laravel/framework/v/stable.svg" alt="Latest Stable Version"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://poser.pugx.org/laravel/framework/license.svg" alt="License"></a>
-</p>
+Esta api refere-se ao back end da plataforma plantus.
 
-## About Laravel
 
-Laravel is a web application framework with expressive, elegant syntax. We believe development must be an enjoyable and creative experience to be truly fulfilling. Laravel takes the pain out of development by easing common tasks used in many web projects, such as:
+## Descrição.
 
-- [Simple, fast routing engine](https://laravel.com/docs/routing).
-- [Powerful dependency injection container](https://laravel.com/docs/container).
-- Multiple back-ends for [session](https://laravel.com/docs/session) and [cache](https://laravel.com/docs/cache) storage.
-- Expressive, intuitive [database ORM](https://laravel.com/docs/eloquent).
-- Database agnostic [schema migrations](https://laravel.com/docs/migrations).
-- [Robust background job processing](https://laravel.com/docs/queues).
-- [Real-time event broadcasting](https://laravel.com/docs/broadcasting).
+Este projeto foi criado para gerenciar dados e arquivos referentes aos usuários.
+Os usuários possuem diferentes seções (roles) mas o usuário do tipo admnistrativo tem mais poder na aplicação, pois o próprio que terá acesso a dar update dos dados para si mesmo e para os demais, as rotas para atualizar os dados dos usuários é sempre a mesma porém quando um usuário do tipo Admnistrativo quiser atualizar dados de terceiros ele terá que adicionar o parametro user_id nas rotas.
 
-Laravel is accessible, powerful, and provides tools required for large, robust applications.
 
-## Learning Laravel
 
-Laravel has the most extensive and thorough [documentation](https://laravel.com/docs) and video tutorial library of all modern web application frameworks, making it a breeze to get started with the framework.
+## Rotas: 
 
-If you don't feel like reading, [Laracasts](https://laracasts.com) can help. Laracasts contains over 1500 video tutorials on a range of topics including Laravel, modern PHP, unit testing, and JavaScript. Boost your skills by digging into our comprehensive video library.
+## criar usuário:
+Esta rota cria um usuário na plataforma e recebe como retorno um json confirmando os dados do usuário.
 
-## Laravel Sponsors
+url : baseUrl/api/user/create
+method: POST
+body: {
+    "name" => "nome do usuario",
+    "email" => "email do usuário",
+    "cpf" => "cpf do usuário",
+    "password" => "password do usuário"
+}
 
-We would like to extend our thanks to the following sponsors for funding Laravel development. If you are interested in becoming a sponsor, please visit the Laravel [Patreon page](https://patreon.com/taylorotwell).
 
-- **[Vehikl](https://vehikl.com/)**
-- **[Tighten Co.](https://tighten.co)**
-- **[Kirschbaum Development Group](https://kirschbaumdevelopment.com)**
-- **[64 Robots](https://64robots.com)**
-- **[Cubet Techno Labs](https://cubettech.com)**
-- **[Cyber-Duck](https://cyber-duck.co.uk)**
-- **[British Software Development](https://www.britishsoftware.co)**
-- **[Webdock, Fast VPS Hosting](https://www.webdock.io/en)**
-- **[DevSquad](https://devsquad.com)**
-- [UserInsights](https://userinsights.com)
-- [Fragrantica](https://www.fragrantica.com)
-- [SOFTonSOFA](https://softonsofa.com/)
-- [User10](https://user10.com)
-- [Soumettre.fr](https://soumettre.fr/)
-- [CodeBrisk](https://codebrisk.com)
-- [1Forge](https://1forge.com)
-- [TECPRESSO](https://tecpresso.co.jp/)
-- [Runtime Converter](http://runtimeconverter.com/)
-- [WebL'Agence](https://weblagence.com/)
-- [Invoice Ninja](https://www.invoiceninja.com)
-- [iMi digital](https://www.imi-digital.de/)
-- [Earthlink](https://www.earthlink.ro/)
-- [Steadfast Collective](https://steadfastcollective.com/)
-- [We Are The Robots Inc.](https://watr.mx/)
-- [Understand.io](https://www.understand.io/)
-- [Abdel Elrafa](https://abdelelrafa.com)
-- [Hyper Host](https://hyper.host)
+## login:
+Esta rota efetua um login de um usuário e retorna um json contendo o token de acesso e quantos segundos durará a validação deste token, ao acabar este tempo um novo login deve ser efetuado    
 
-## Contributing
+url : baseUrl/api/auth/login
+method: POST
+body: {
+    "cpf" => "cpf do usuário",
+    "password" => "password do usuário"
+}
 
-Thank you for considering contributing to the Laravel framework! The contribution guide can be found in the [Laravel documentation](https://laravel.com/docs/contributions).
+exemplo de retorno :
+{
+"access_token": "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJodHRwOlwvXC9sb2NhbGhvc3Q6ODAwMFwvYXBpXC9hdXRoXC9sb2dpbiIsImlhdCI6MTY1MDI0MTA3NywiZXhwIjoxNjUwMjQ0Njc3LCJuYmYiOjE2NTAyNDEwNzcsImp0aSI6Ik10Rk92RVEyblZYdE9VWGgiLCJzdWIiOjEsInBydiI6Ijg3ZTBhZjFlZjlmZDE1ODEyZmRlYzk3MTUzYTE0ZTBiMDQ3NTQ2YWEifQ.Hem3_y-JzTIV8OhPFBfTsectpt8mGFh_DlFXgI6dYKg",
+"token_type": "bearer",
+"expires_in": 3600
+}
 
-## Security Vulnerabilities
+## Rotas de acesso a dados
 
-If you discover a security vulnerability within Laravel, please send an e-mail to Taylor Otwell via [taylor@laravel.com](mailto:taylor@laravel.com). All security vulnerabilities will be promptly addressed.
+Este grupo de rotas necessita de que o token de acesso esteja no Bearer da requisição.
+As rotas possuem um parâmetro opcional (user_id), caso seja enviado baixará os dados respectivo do id daquele usuário, caso não seja enviado buscará os dados validados pelo próprio Token
 
-## License
 
-The Laravel framework is open-source software licensed under the [MIT license](https://opensource.org/licenses/MIT).
+UserProfile:
+    url: baseUrl/api/user/profile/find/{?user_id}
+UserAddress:
+    url: baseUrl/api/user/address/find/{?user_id}
+UserHealth:
+    url: baseUrl/api/user/health/find/{?user_id}
+UserProfessional:
+    url: baseUrl/api/user/health/find/{?user_id}
+UserDocument:      
+    url: baseUrl/api/user/document/find/{?user_id}
+Roles:
+    url: baseUrl/api/role/show
+Team: 
+    url: baseUrl/api/team/show
+
+## Rotas de update:
+
+estas rotas vao estar restritas ao usuário Admnistrador, apenas ele pode criar e editar dados do usuário, um parâmetro opcional user_id também pode ser enviado para as rotas, caso não seja enviado a aplicação entenderá que o usuário admnistrador está alterando seus próprios dados, para alterar dados de terceiros é necessário adicionar o id do usuário desejado ao final da rota
+
+UserProfile:
+url: baseUrl/api/user/profile/update/{?user_id}
+body: {
+    "name" => "nome do usuário",
+    "birth_date" => "data de nascimento no formato dd-mm-yyyy",
+    "email" => "email do usuário",
+    "phone" => "telefone do usuário apenas string sem máscara",
+    "whatsapp" => "whatsapp do usuário apenas string sem máscara",
+    "avatar" => "arquivo de imagem do usuário (foto)",
+    "start_plantus" => "data de inicio na plataforma no formato dd-mm-yyyy",    
+}
+
+exemplo de retorno :
+{
+"id": 1,
+"name": "darrlin",
+"email": "arquimedes@gmail.com",
+"email_verified_at": null,
+"birth_date": "04-02-1992",
+"cpf": "10492234035",
+"phone": "84996530353",
+"whatsapp": "84996530353",
+"avatar": "https:\/\/plantus.s3.amazonaws.com\/user\/avatar\/1\/L40VwB2Zd9RJ8ezfhowVw8eWe6XQrTuh4ZSVC5rg.png",
+"start_plantus": "2022-03-14T00:00:00.000000Z",
+"created_at": "2022-04-12 16:36:42",
+"updated_at": "2022-04-18 00:33:33"
+}
+
+UserAddress:
+url: baseUrl/api/user/address/update
+body: {
+    "street" => "nome da rua",
+    "number" => "numero da casa",
+    "cep" => "cep do endereço" (ainda sem validação com api externa para saber se o cep é real),
+    "neighborhood" => "bairro do endereço",
+    "state" => "estado do endereço (RN, SP ... )",
+    "city" => "cidade do endereço",
+    "adjunct" => "complemento (opcional)",
+    "file" => "arquivo do comprovante de endereco"    
+}
+exemplo de retorno:
+{
+"id": 1,
+"user_id": 1,
+"street": "Rua dos salmos",
+"number": "53",
+"cep": "59123525",
+"neighborhood": "panatis",
+"state": "RN",
+"city": "Natal",
+"adjunct": "final da rua2",
+"created_at": "2022-04-17 18:31:23",
+"updated_at": "2022-04-17 18:31:23",
+"file": {
+    "url": "https:\/\/plantus.s3.amazonaws.com\/user\/address\/1\/LtVU4V7IVORZwreCSl5JP6kf13yM4BDkcdFafqTX.png",
+    "extension": "png"
+    }
+}
+
+UserHealth:
+url: baseUrl/api/user/health/update
+body: {
+    "is_allergy" => 1 para verdadeiro, 0 para falso,
+    "allergy_description" => "descrição da alergia", (necessário ser verdadeiro em is_allergy)
+    "use_medicine" => 1 para verdadeiro, 0 para falso,
+    "medicine_description" => "descrição da medicação", (necessário ser verdadeiro em use_medicine)
+    "blood_type" => "tipo sanguíneo",
+    "sus_card" => "número do cartão sus (apenas string)",
+    "sus_card_file" => "arquivo do cartão do sus",
+    "emergency_phone_number_a" => "numero de contato a",
+    "emergency_contact_name_a" => "nome do contato do número a",    
+    "emergency_kinship_a" => "parentesco do número de contato a",  
+    "emergency_phone_number_b" => "numero de contato b",
+    "emergency_contact_name_b" => "nome do contato do número b",    
+    "emergency_kinship_b" => "parentesco do número de contato b",
+
+}
+
+UserDocument:      
+    url: baseUrl/api/user/document/update/{?user_id}
+body: {
+    'document' => [
+        'rg' => 'numero do rg',
+        'date_emission' =>'data de emissão no formato dd-mm-yyyy',
+        'issuing_agency'  => 'orgão emissor',
+        'issuing_state' => 'estado de emissão (RN, SP, AM ...)',
+        'file' => "arquivo do documento com foto"
+        ],
+    'work_card' => [
+        'number' => 'número da carteira de trabalho',
+        'serie' => 'número de série',
+        'pis_pased' => 'número do pis',
+        'date_emission' => 'data de emissão no formato dd-mm-yyyy',
+        'file' => "arquivo do documento da carteira de trabalho"
+    ],
+    'vote_card' => [
+        'number' => 'número do título de eleitor',
+        'session' => 'seção de votação',
+        'zone' => 'zona eleitoral',
+        'file' => "arquivo do documento do título de eleitor"
+    ],
+    'passport' => [
+        'passport' => 'ID do passaporte',
+        'date_emission' => 'data de emissão no formato dd-mm-yyyy',
+        'expiration_date'  => 'data de vencimento no formato dd-mm-yyyy',
+        'file' => "arquivo do documento do passaporte"
+    ],
+    'american_visas' => [
+        'number' => 'número do visto americano',
+        'date_emission' => 'data de emissão no formato dd-mm-yyyy',
+        'expiration_date'  => 'data de vencimento no formato dd-mm-yyyy',
+        'file' => "arquivo do documento do visto americano"
+    ],
+    'document_data' => [
+        'gender' => 'gênero',
+        'marital_status' => 'stado civil',
+        'mother' => 'nome da mãe',
+        'father' => 'nome do pai',
+        'bank_account' => 'dados bancários'
+    ]
+}
+
