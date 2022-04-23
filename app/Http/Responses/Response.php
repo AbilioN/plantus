@@ -7,7 +7,7 @@ class Response
 {
 
 
-    public function success($data)
+    public static function success($data)
     {
         return response()->json([
             'success' => true,

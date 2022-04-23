@@ -3,7 +3,9 @@
 namespace App\Repositories;
 
 use App\Exceptions\InvalidUserRoleException;
+use App\Exceptions\UserCpfAlreadyExistsException;
 use App\Exceptions\UserEmailAlreadyExistsException;
+use App\Http\Responses\Response;
 use App\User;
 use Carbon\Carbon;
 use DateTime;
@@ -24,14 +26,13 @@ class UserRepository
         $user = $this->model->findByCpf($data['cpf']);
         if($user)
         {
-            throw new Exception('Já existe usuário para este cpf');
-
-            // return response()->json(['error' => 'Já existe usuário para este cpf'] , 500);
+            return Response::badRequest('Já existe usuário para este cpf');
         }
         $user = $this->model->where('email', $data['email'])->first();
         if($user)
         {
-            throw new UserEmailAlreadyExistsException('Já existe usuário para este email');
+            return Response::badRequest('Já existe usuário para este email');
+
         }
 
         // if(!isset($data['role_id']))

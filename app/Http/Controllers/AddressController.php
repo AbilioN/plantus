@@ -25,14 +25,20 @@ class AddressController extends Controller
 
     }
 
-    public function update(Request $request)
+    public function update(Request $request, $user_id = null)
     {
 
         try{ 
+
+
+
             $data = $request->all();
 
             $file = $data['file'];
+            
             unset($data['file']);
+            
+            
             $document = $this->updateUserAddressFile($file);
     
     
