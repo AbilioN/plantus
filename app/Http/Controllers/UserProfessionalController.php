@@ -3,7 +3,9 @@
 namespace App\Http\Controllers;
 
 use App\Exceptions\InvalidProfessionalExperienceException;
+use App\Exceptions\UserNotFoundException;
 use App\Models\UserProfessional;
+use App\User;
 use Exception;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -12,17 +14,28 @@ class UserProfessionalController extends Controller
 {
     
 
-    public function update(Request $request)
+    public function update(Request $request , $user_id = null)
     {
 
         $data = $request->all();
 
-        $user = Auth::user();
+        if($user_id)
+        {
+            $this->user = User::find($user_id);
+        }else{
+            $this->user = Auth::user();
+        }
+
+        if(!$this->user)
+        {
+            throw new UserNotFoundException();
+        }
+
         
-        $userProfessional = UserProfessional::where('user_id' , $user->id)->first();
+        $userProfessional = UserProfessional::where('user_id' , $this->user->id)->first();
         if(!$userProfessional)
         {
-            $userProfessional = UserProfessional::make(['user_id' => $user->id]);
+            $userProfessional = UserProfessional::make(['user_id' => $this->user->id]);
         }
         
         if(isset($data['is_professional_experience']))

@@ -24,51 +24,60 @@ class UserProfileController extends Controller
         $this->documentCategory = $documentCategory->where('category' , 'avatar')->first();
     }
 
-    public function update(Request $request)
+    public function update(Request $request, $user_id = null)
     {
-        try {
-            $data = $request->all();
-            $avatar = $data['avatar'];
-            unset($data['avatar']);
-    
-            $document = $this->updateUserAvatar($avatar);
-    
-            $user = Auth::user();
-    
-            $avatarUrl = $this->uploader->getFileUrl($document['path']);
-    
-            $data['avatar'] = $avatarUrl;
+        $data = $request->all();
+        $avatar = $data['avatar'];
+        unset($data['avatar']);
+
+        $document = $this->updateUserAvatar($avatar);
+
+
+        if($user_id)
+        {
+            $this->user = User::find($user_id);
+        }else{
+            $this->user = Auth::user();
+        }
+
+        if(!$this->user)
+        {
             
-            $birthDate = new Carbon($data['birth_date']);
+            throw new UserNotFoundException();
+        }
 
-            $startPlantus = new Carbon($data['start_plantus']);
+        $avatarUrl = $this->uploader->getFileUrl($document['path']);
 
-            $user->name = $data['name'];
-            $user->birth_date = $birthDate;
-            $user->start_plantus = $startPlantus;
-            $user->phone = $data['phone'];
-            $user->whatsapp = $data['whatsapp'];
-            $user->avatar = $avatarUrl;
-            try{
-                // $updatedUser = User::find($user->id)->update($insertData);
+        $data['avatar'] = $avatarUrl;
+        
+        $birthDate = new Carbon($data['birth_date']);
 
-                $updatedUser = $user->save();
-                if($updatedUser)
-                {
-                    $user = Auth::user();
-                    $userArray = $user->toArray();
-                    $userArray['birth_date'] = $user->birth_date->format('d-m-Y');
-                    return response()->json($userArray);
-                }
-            }catch(Exception $e)
+        $startPlantus = new Carbon($data['start_plantus']);
+
+        $this->user->name = $data['name'];
+        $this->user->birth_date = $birthDate;
+        $this->user->start_plantus = $startPlantus;
+        $this->user->phone = $data['phone'];
+        $this->user->whatsapp = $data['whatsapp'];
+        $this->user->avatar = $avatarUrl;
+
+        
+        try{
+
+            $updatedUser = $this->user->save();
+            if($updatedUser)
             {
-                dd($e->getMessage());
+                $userArray = collect($this->user)->toArray();
+                $userArray['birth_date'] = $this->user->birth_date->format('d-m-Y');
+                return response()->json($userArray);
             }
-
-
-        }catch (\Exception $e) {
+        }catch(Exception $e)
+        {
             dd($e->getMessage());
         }
+
+
+     
 
 
     }

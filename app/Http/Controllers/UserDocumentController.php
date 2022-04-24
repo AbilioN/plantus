@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Exceptions\UserNotFoundException;
 use App\Models\Document;
 use App\Models\UserDocuments;
 use Carbon\Carbon;
@@ -15,6 +16,7 @@ use App\Models\UserPassportCard;
 use App\Models\UserVoteCard;
 use App\Models\UserWorkCard;
 use App\Repositories\DocumentRepository;
+use App\User;
 use Exception;
 use Illuminate\Support\Facades\DB;
 
@@ -28,59 +30,69 @@ class UserDocumentController extends Controller
         $this->uploader = $uploader;
         $this->documentCategory = $documentCategory->where('category' , 'documents')->first();
     }
-    public function update(Request $request)
+    public function update(Request $request, $user_id = null)
     {
-        $this->user = Auth::user();
-    
+        
+        if($user_id)
+        {
+            $this->user = User::find($user_id);
+        }else{
+            $this->user = Auth::user();
+        }
+
+        if(!$this->user)
+        {
+            throw new UserNotFoundException();
+        }
         $data = $request->all();
         // dd($data);
-        // $this->document = [
-        //     'document' => [
-        //         'rg' => '2497357',
-        //         'date_emission' =>'02-04-2006',
-        //         'issuing_agency'  => 'ITEP',
-        //         'issuing_state' => 'RN',
-        //         'file' => $data['file1']
-        //     ],
-        //     'work_card' => [
-        //         'number' => '235554454615421',
-        //         'serie' => '32563',
-        //         'pis_pased' => '32653562553',
-        //         'date_emission' => '01-09-1994',
-        //         'file' => $data['file2']
-        //     ],
-        //     'vote_card' => [
-        //         'number' => '653556565423233',
-        //         'session' => '21',
-        //         'zone' => '51',
-        //         'file' => $data['file1']
+        $this->document = [
+            'document' => [
+                'rg' => '2497357',
+                'date_emission' =>'02-04-2006',
+                'issuing_agency'  => 'ITEP',
+                'issuing_state' => 'RN',
+                'file' => $data['file1']
+            ],
+            'work_card' => [
+                'number' => '235554454615421',
+                'serie' => '32563',
+                'pis_pased' => '32653562553',
+                'date_emission' => '01-09-1994',
+                'file' => $data['file2']
+            ],
+            'vote_card' => [
+                'number' => '653556565423233',
+                'session' => '21',
+                'zone' => '51',
+                'file' => $data['file1']
 
-        //     ],
-        //     'passport' => [
-        //         'passport' => '58553ABD5622',
-        //         'date_emission' => '01-09-1994',
-        //         'expiration_date'  => '01-09-2004',
-        //         'file' => $data['file2']
+            ],
+            'passport' => [
+                'passport' => '58553ABD5622',
+                'date_emission' => '01-09-1994',
+                'expiration_date'  => '01-09-2004',
+                'file' => $data['file2']
 
-        //     ],
-        //     'american_visas' => [
-        //         'number' => '653556565423233',
-        //         'date_emission' => '01-09-1994',
-        //         'expiration_date'  => '01-09-2004',
-        //         'file' => $data['file2']
-        //     ],
-        //     'document_data' => [
-        //         'gender' => 'Feminino',
-        //         'marital_status' => 'Casada',
-        //         'mother' => 'Maria Silva',
-        //         'father' => 'João Silva',
-        //         'bank_account' => 'Banco do Brasil - 001 agência 253-x - Conta Corrente 253265-1'
-        //     ]
-        // ];
+            ],
+            'american_visas' => [
+                'number' => '653556565423233',
+                'date_emission' => '01-09-1994',
+                'expiration_date'  => '01-09-2004',
+                'file' => $data['file2']
+            ],
+            'document_data' => [
+                'gender' => 'Feminino',
+                'marital_status' => 'Casada',
+                'mother' => 'Maria Silva',
+                'father' => 'João Silva',
+                'bank_account' => 'Banco do Brasil - 001 agência 253-x - Conta Corrente 253265-1'
+            ]
+        ];
 
-        // $data = $this->document;
+        $data = $this->document;
 
-        $data = $request->all();
+        // $data = $request->all();
 
 
         if(isset($data['document']))
@@ -621,11 +633,22 @@ class UserDocumentController extends Controller
 
 
 
-    public function find(Request $request)
+    public function find(Request $request, $user_id = null)
     {
 
-        
-        $this->user = Auth::user();
+        if($user_id)
+        {
+            $this->user = User::find($user_id);
+        }else{
+            $this->user = Auth::user();
+        }
+
+        if(!$this->user)
+        {
+            throw new UserNotFoundException();
+        }
+
+
         $outputData = [];
         $userDocument = $this->findUserDocument();
 
@@ -839,4 +862,6 @@ class UserDocumentController extends Controller
         $userDocument = $userDocument->except(['id', 'user_id' , 'created_at', 'updated_at'])->toArray();
         return $userDocument;
     }
+
+    
 }

@@ -2,10 +2,12 @@
 
 namespace App\Http\Controllers;
 
+use App\Exceptions\UserNotFoundException;
 use App\Models\Document;
 use App\Models\DocumentCategory;
 use App\Models\UserHealth;
 use App\Repositories\DocumentRepository;
+use App\User;
 use Exception;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -15,6 +17,8 @@ class UserHealthController extends Controller
 
     private DocumentRepository $uploader;
     private DocumentCategory $documentCategory;
+
+    private User $user;
     public function __construct(DocumentRepository $uploader, DocumentCategory $documentCategory)
     {
         $this->uploader = $uploader;
@@ -22,12 +26,24 @@ class UserHealthController extends Controller
     }
 
 
-    public function find(Request $request)
+    public function find(Request $request, $user_id = null)
     {
 
-        $user = Auth::user();
+        if($user_id)
+        {
+            $this->user = User::find($user_id);
+        }else{
+            $this->user = Auth::user();
+        }
 
-        $userHealth = UserHealth::where('user_id', $user->id)->first();
+        if(!$this->user)
+        {
+            
+            throw new UserNotFoundException();
+        }
+
+
+        $userHealth = UserHealth::where('user_id', $this->user->id)->first();
 
         if(isset($userHealth->sus_card))
         {
@@ -45,7 +61,7 @@ class UserHealthController extends Controller
            }
         }
 
-        $vaccineCard = Document::where(['user_id'  => $user->id , 'document_category_id' => $this->documentCategory->id , 'description' => 'vaccine_card'])->first();
+        $vaccineCard = Document::where(['user_id'  => $this->user->id , 'document_category_id' => $this->documentCategory->id , 'description' => 'vaccine_card'])->first();
         if($vaccineCard)
         {
             
@@ -72,9 +88,22 @@ class UserHealthController extends Controller
         return response()->json($userHealthArray, 200);
     }
 
-    public function update(Request $request)
+    public function update(Request $request, $user_id = null)
     {
 
+
+        if($user_id)
+        {
+            $this->user = User::find($user_id);
+        }else{
+            $this->user = Auth::user();
+        }
+
+        if(!$this->user)
+        {
+            
+            throw new UserNotFoundException();
+        }
         $data = $request->all();
         // separar os arquivos do request
 
@@ -83,21 +112,19 @@ class UserHealthController extends Controller
         $vaccineFile =  $data['vaccine_file'];
         unset($data['vaccine_file']);
 
-        
-        $user = Auth::user();
         $documentSusCard = $this->updateSusCardFile($susCardFile);
         $documentVaccine = $this->updateVaccineFile($vaccineFile);
 
         if($documentSusCard && $documentVaccine)
         {
-            $userHealth = UserHealth::where('user_id' , $user->id)->first();
+            $userHealth = UserHealth::where('user_id' , $this->user->id)->first();
             if(!$userHealth)
             {
-                $userHealth = UserHealth::make(['user_id' , $user->id]);
+                $userHealth = UserHealth::make(['user_id' , $this->user->id]);
 
             }
 
-            $userHealth->user_id = $user->id;
+            $userHealth->user_id = $this->user->id;
 
             $userHealth->is_allergy = (bool) $data['is_allergy'];
 
@@ -173,11 +200,10 @@ class UserHealthController extends Controller
     public function updateSusCardFile($susCardFile)
     {
         $fileExtension = $susCardFile->getClientOriginalExtension();
-        $user = Auth::user();
-        $bucket =  'user/health/'.$user->id;
+        $bucket =  'user/health/'.$this->user->id;
         
 
-        $currentDocument = Document::where(['user_id' => $user->id , 'document_category_id' =>$this->documentCategory->id , 'description' => 'sus_card'])->first();
+        $currentDocument = Document::where(['user_id' => $this->user->id , 'document_category_id' =>$this->documentCategory->id , 'description' => 'sus_card'])->first();
         if($currentDocument)
         {
             // remover arquivo e deletar document
@@ -199,7 +225,7 @@ class UserHealthController extends Controller
                 'path' => $filePath,
                 'extension' => $fileExtension,
                 'document_category_id' => $this->documentCategory->id,
-                'user_id' => $user->id,
+                'user_id' => $this->user->id,
                 'description' => 'sus_card'
             ]);
 
@@ -215,11 +241,10 @@ class UserHealthController extends Controller
     public function updateVaccineFile($vaccineFile)
     {
         $fileExtension = $vaccineFile->getClientOriginalExtension();
-        $user = Auth::user();
-        $bucket =  'user/health/'.$user->id;
+        $bucket =  'user/health/'.$this->user->id;
         
 
-        $currentDocument = Document::where(['user_id' => $user->id , 'document_category_id' =>$this->documentCategory->id , 'description' => 'vaccine_card'])->first();
+        $currentDocument = Document::where(['user_id' => $this->user->id , 'document_category_id' =>$this->documentCategory->id , 'description' => 'vaccine_card'])->first();
         if($currentDocument)
         {
             // remover arquivo e deletar document
@@ -241,7 +266,7 @@ class UserHealthController extends Controller
                 'path' => $filePath,
                 'extension' => $fileExtension,
                 'document_category_id' => $this->documentCategory->id,
-                'user_id' => $user->id,
+                'user_id' => $this->user->id,
                 'description' => 'vaccine_card'
             ]);
 

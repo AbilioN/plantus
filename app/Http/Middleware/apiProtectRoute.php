@@ -18,7 +18,6 @@ class apiProtectedRoute
     public function handle($request, Closure $next)
     {
 
-        dd('aqyui');
 
         return $next($request);
     }

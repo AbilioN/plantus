@@ -38,27 +38,27 @@ Route::group([
 
 Route::group(['middleware' => 'basicUser'], function(){
 
-    Route::post('/user/address/update' , 'AddressController@update')->name('user.address.update');
-    
-    
-    Route::post('user/profile/update' , 'UserProfileController@update')->name('user.profile.update');
     Route::get('user/profile/find/{user_id?}' , 'UserProfileController@find')->name('user.profile.find');
 
-    Route::post('user/health/update', 'UserHealthController@update')->name('user.health.update');
-    Route::get('user/health/find', 'UserHealthController@find')->name('user.health.find');
+    Route::get('user/health/find/{user_id?}', 'UserHealthController@find')->name('user.health.find');
 
+    Route::get('user/professional/find/{user_id?}' , 'UserProfessionalController@find')->name('user.professional.find');
 
-    Route::post('user/professional/update' , 'UserProfessionalController@update')->name('user.professional.update');
-    Route::get('user/professional/find' , 'UserProfessionalController@find')->name('user.professional.find');
-
-    Route::post('user/documents/update' , 'UserDocumentController@update')->name('user.documents.update');
-
-
-    Route::get('user/documents/find' , 'UserDocumentController@find')->name('user.documents.update');
+    Route::get('user/documents/find/{user_id?}' , 'UserDocumentController@find')->name('user.documents.update');
    
-    
+    Route::group(['middleware' => 'adminUser'] , function (){
+
+        Route::post('user/documents/update/{user_id?}' , 'UserDocumentController@update')->name('user.documents.update');
+        Route::post('user/health/update/{user_id?}', 'UserHealthController@update')->name('user.health.update');
+        Route::post('user/profile/update/{user_id?}' , 'UserProfileController@update')->name('user.profile.update');
+        Route::post('user/address/update/{user_id?}' , 'AddressController@update')->name('user.address.update');
+        Route::post('user/professional/update/{user_id?}' , 'UserProfessionalController@update')->name('user.professional.update');
+        Route::post('role/insert/{user_id?}','RoleController@insert')->name('role.insert');
+
+    });
+
     Route::get('role/show' , 'RoleController@show')->name('role.show');
-    Route::post('role/insert/{user_id?}','RoleController@insert')->name('role.insert');
+
     
     Route::get('team/show' , 'TeamController@show')->name('team.show');
     Route::post('teste' , function(){
