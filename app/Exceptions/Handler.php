@@ -52,7 +52,8 @@ class Handler extends ExceptionHandler
             $exception instanceof InvalidUserRoleException || 
             $exception instanceof InvalidProfessionalExperienceException ||
             $exception instanceof UserNotAuthenticatedException ||
-            $exception instanceof UserCpfAlreadyExistsException
+            $exception instanceof UserCpfAlreadyExistsException ||
+            $exception instanceof InvalidSubRoleException
         )
         {
             return Response::badRequest($exception->getMessage());

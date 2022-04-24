@@ -7,6 +7,7 @@ use App\Exceptions\UserCpfAlreadyExistsException;
 use App\Exceptions\UserEmailAlreadyExistsException;
 use App\Http\Requests\CreateUserRequest;
 use App\Http\Responses\Response;
+use App\Models\UserRoles;
 use App\Repositories\UserRepository;
 use App\Services\CpfValidator;
 use App\User;
@@ -14,6 +15,8 @@ use Exception;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Validator;
+use App\Models\UsersTeam;
+use Illuminate\Support\Facades\DB;
 
 class UserController extends Controller
 {
@@ -25,6 +28,8 @@ class UserController extends Controller
     public function create(Request $request)
     { 
 
+        DB::beginTransaction();
+        
 
         $rules = [
             'name' => 'required|string',
@@ -83,9 +88,25 @@ class UserController extends Controller
                 'password' => $password,
             ]);
 
+
             if($createdUser)
             {
+                $userTeam = UsersTeam::firstOrCreate([
+                    'team_id' => 1, //por enquanto so tem o plantus, quando houver outros necessario mudar aqui
+                    'user_id' => $createdUser->id,
+                ]);
+                
+                if(isset($data['role_id']))
+                {
+                    UserRoles::create([
+                        'user_id' => $createdUser->id,
+                        'role_id' => $data['role_id'],
+                        'sub_role_id' => null
+                    ]);
+                }
+
                 $responseArray = collect($createdUser)->toArray();
+                DB::commit();
                 return Response::success($responseArray);
             }
 
@@ -93,9 +114,6 @@ class UserController extends Controller
         }else{
             throw new InvalidCpfException('Cpf Inválido');
         }
-        // $user = $this->repo->createUser($data);
-        return response()->json($user);
-
-    
+        DB::rollback();
     }
 }

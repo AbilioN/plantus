@@ -63,7 +63,7 @@ class UserRepository
     
             }catch(Exception $e)
             {
-                dd($e->getMessage());
+                Response::badRequest($e->getMessage());
             }
    
         

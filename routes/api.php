@@ -58,9 +58,9 @@ Route::group(['middleware' => 'basicUser'], function(){
    
     
     Route::get('role/show' , 'RoleController@show')->name('role.show');
-
+    Route::post('role/insert/{user_id?}','RoleController@insert')->name('role.insert');
     
-   
+    Route::get('team/show' , 'TeamController@show')->name('team.show');
     Route::post('teste' , function(){
 
     });
